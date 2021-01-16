@@ -1,0 +1,118 @@
+Puppet is like an configuration tool
+
+launch 3 ubuntu instances.one is client and 2 is agent
+
+it's an pull based machanism
+
+Puppet Master Installation:
+wget https://apt.puppetlabs.com/puppet6-release-bionic.deb
+sudo dpkg -i puppet6-release-bionic.deb
+apt update
+apt-get install puppetserver -y
+
+Note:
+before u run puppetserver we need to configure puppet
+default it will be on
+ls /opt/puppetlabs/server/bin/
+cp /opt/puppetlabs/server/bin/ /usr/local/bin/
+cp /opt/puppetlabs/puppet/bin/puppet /usr/local/bin/
+
+now u run the setup it will configure now
+
+puppetserver ca setup
+service puppetserver start
+
+vi /etc/hostname
+
+privateip puppet puppet.local
+privateip2 client1 client1.local
+privateip3 client2 client2.local
+
+and
+
+
+login into agents server
+nano /etc/hostnames (note for master give name as puppet)
+gives that name and reboot it.
+
+**** after login into the agents
+Puppet Agent Installation:
+wget https://apt.puppetlabs.com/puppet6-release-bionic.deb
+sudo dpkg -i puppet6-release-bionic.deb
+apt update
+apt-get install puppet-agent -y
+
+
+cp /opt/puppetlabs/puppet/bin/puppet /usr/local/bin/
+
+type
+puppet agent --test
+it fails we need to configure hosts
+
+vi /etc/hosts(remove the previous data)
+
+below are hostnames of cilent)
+privateip puppet puppet.local
+privateip2 client1 client1.local
+privateip3 client2 client2.local
+
+
+now type 
+
+puppet agent --test
+
+after go to the client type
+
+ppetserver ca list -all
+
+puppetserver ca sign --certname certificatename
+
+
+do the same things for client 2 also
+
+
+in ansible we called as playbooks here we called as manifest 
+
+in client
+
+cd /etc/puppetlabs/code/environments/production/manifests
+vi main.pp
+
+node default {
+
+notify {'this is default config':}
+
+}
+
+now go to agent type
+
+
+puppet agent -t 
+
+note: all configuration we will maintain in ("client") /etc/puppetlabs/code/environments/production/manifests
+
+puppet reference
+
+https://puppet.com/docs/puppet/7.1/type.html
+
+
+https://puppet.com/docs/puppet/7.1/type.html#file-attributes
+
+nowgo to client 
+cd /etc/puppetlabs/code/environments/production/manifests
+vi main.pp
+node default {
+
+notify {'this is default config':}
+include testfile
+}
+class testfile {
+file { 'testfile': 
+#path => '/tmp/testfile'
+ensure => '/tmp/testfile' ,
+content => 'welcome to devops'
+
+
+}
+
+
